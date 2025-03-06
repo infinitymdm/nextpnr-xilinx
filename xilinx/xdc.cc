@@ -108,14 +108,15 @@ void Arch::parseXdc(std::istream &in)
         if (str.front() != '[' || str.back() != ']')
             log_error("failed to parse target '%s' (on line %d)\n", str.c_str(), lineno);
         str = str.substr(1, str.size() - 2);
-        auto split = split_to_args(str, false);
+        auto split = split_to_args(str, true);
         if (split.size() < 1)
             log_error("failed to parse target (on line %d)\n", lineno);
         if (split.front() != "get_ports" && split.front() != "get_nets")
             log_error("targets other than 'get_ports' or 'get_nets' are not supported (on line %d)\n", lineno);
         if (split.size() < 2)
             log_error("failed to parse target (on line %d)\n", lineno);
-        str = strip_quotes(split.at(1));
+        auto netnames = split_to_args(strip_quotes(split.at(1)), false);
+        str = netnames.at(0);
         if (str.empty())
             return tgt_nets;
         IdString netname = id(str);
